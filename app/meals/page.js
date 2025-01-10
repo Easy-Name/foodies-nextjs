@@ -2,11 +2,16 @@ import Link from "next/link";
 import classes from "./page.module.css";
 import MealsGrid from "@/components/meals/meals-grid";
 import { getMeals } from "@/lib/meals";
+import { Suspense } from "react";
 
-export default  async function MealsPage() {
-
+async function Meals() {
   const meals = await getMeals();
 
+  return <MealsGrid meals={meals} />;
+}
+
+export default async function MealsPage() {
+  //const meals = await getMeals();
 
   return (
     <>
@@ -19,13 +24,13 @@ export default  async function MealsPage() {
           Choose your favorite recipe and cook it yourself. It is easy and fun!
         </p>
         <p className={classes.cta}>
-          <Link href="/meals/share">
-          Share Your Favorite Recipe
-          </Link>
+          <Link href="/meals/share">Share Your Favorite Recipe</Link>
         </p>
         <main className={classes.header}>
-
-          <MealsGrid meals={meals}/>
+          {/* Suspense tag to allow the whole page to be displayed whiles Meals component is loading*/}
+          <Suspense fallback={<p className={classes.loading}>Fetching meals...</p>}>
+            <Meals />
+          </Suspense>
         </main>
       </header>
     </>
